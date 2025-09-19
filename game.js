@@ -34,7 +34,7 @@ class StarParticle {
   draw(ctx) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,${this.alpha})';
+    ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
     ctx.fill();
   }
 }
@@ -85,14 +85,16 @@ function startShooting() {
 function spawnEnemies() {
   setInterval(() => {
     if (!paused) {
-      const speed = Math.random() * 1.5 + 1.5;
+      const scale = Math.random() * 2 + 1; // ✅ 1x 到 3x 随机尺寸
+const speed = 5 / scale; // ✅ 尺寸越大，速度越慢
       const randomImg = enemyImages[Math.floor(Math.random() * enemyImages.length)];
       const enemy = {
         x: Math.random() * canvas.width,
         y: -30,
         speed: speed,
         img: randomImg,
-        fallback: false
+        fallback: false,
+        scale: scale // ✅ 新增属性
       };
       if (!randomImg.complete || randomImg.naturalWidth === 0) {
         enemy.fallback = true;
@@ -100,6 +102,7 @@ function spawnEnemies() {
       enemies.push(enemy);
     }
   }, 1000);
+
 }
 
 function updateHUD() {
@@ -165,24 +168,28 @@ function gameLoop() {
   });
 
   enemies.forEach((e, ei) => {
-    e.y += e.speed;
-    if (e.fallback) {
-      ctx.fillStyle = "#ff4444";
-      ctx.fillRect(e.x, e.y, 30, 30);
-    } else {
-      ctx.drawImage(e.img, e.x, e.y, 30, 30);
-    }
+  const size = 30 * e.scale; // ✅ 使用缩放尺寸
+  e.y += e.speed;
 
-    bullets.forEach((b, bi) => {
-      if (
-        b.x < e.x + 30 && b.x + 4 > e.x &&
-        b.y < e.y + 30 && b.y + 10 > e.y
-      ) {
-        bullets.splice(bi, 1);
-        enemies.splice(ei, 1);
-        score += 10;
-        gold += 10;
-        updateHUD();
+  if (e.fallback) {
+    ctx.fillStyle = "#ff4444";
+    ctx.fillRect(e.x, e.y, size, size);
+  } else {
+    const size = 30 * e.scale;
+ctx.drawImage(e.img, e.x, e.y, size, size);
+  }
+
+  // ✅ 子弹碰撞也要用 size
+  bullets.forEach((b, bi) => {
+    if (
+      b.x < e.x + size && b.x + 4 > e.x &&
+      b.y < e.y + size && b.y + 10 > e.y
+    ) {
+      bullets.splice(bi, 1);
+      enemies.splice(ei, 1);
+      score += 10;
+      gold += 10;
+      updateHUD();
       }
     });
   });

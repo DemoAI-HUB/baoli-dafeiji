@@ -216,8 +216,8 @@ function gameLoop() {
   }
 
   // 子弹绘制与移动
-  const bulletWidth = 4;
-const bulletHeight = 16;
+  const bulletWidth = 16;
+const bulletHeight = 128;
 
 bullets.forEach((b, i) => {
   b.y -= 6;
@@ -356,4 +356,5 @@ function buyShield() {
 // 启动游戏
 startShooting();
 spawnEnemiesLoop();
+
 gameLoop();

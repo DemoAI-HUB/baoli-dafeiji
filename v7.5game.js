@@ -36,8 +36,8 @@ let player = {
   height: 40 * playerScale
 };
 let bullets = [], enemies = [];
-const bulletWidth = 16;
-const bulletHeight = 128;
+const bulletWidth = 32;
+const bulletHeight = 32;
 let score = 0, gold = 0;
 let enemySpawnInterval = 1000;       // 初始敌人生成间隔（毫秒）
 let nextSpawnThreshold = 260;        // 初始得分触发点
@@ -219,8 +219,8 @@ function gameLoop() {
   }
 
   // 子弹绘制与移动
-  const bulletWidth = 16;
-const bulletHeight = 128;
+  const bulletWidth = 32;
+const bulletHeight = 32;
 
 bullets.forEach((b, i) => {
   b.y -= 6;
@@ -362,3 +362,4 @@ function buyShield() {
 startShooting();
 spawnEnemiesLoop();
 gameLoop();
+

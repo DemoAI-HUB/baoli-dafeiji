@@ -36,6 +36,8 @@ let player = {
   height: 40 * playerScale
 };
 let bullets = [], enemies = [];
+const bulletWidth = 16;
+const bulletHeight = 128;
 let score = 0, gold = 0;
 let enemySpawnInterval = 1000;       // 初始敌人生成间隔（毫秒）
 let nextSpawnThreshold = 260;        // 初始得分触发点
@@ -136,7 +138,8 @@ function startShooting() {
       // 主机子弹
       bullets.push({
         x: player.x + player.width / 2 - 2,
-        y: player.y
+        y: player.y - bulletHeight
+
       });
 
       // 撩机子弹
@@ -145,9 +148,9 @@ function startShooting() {
         wingmen.forEach((w) => {
           const wx = player.x + player.width / 2 + w.offsetX - wingmanWidth / 2;
           bullets.push({
-            x: wx + wingmanWidth / 2 - 2,
-            y: player.y + 10
-          });
+  x: wx + wingmanWidth / 2,
+  y: player.y - bulletHeight
+});
         });
       }
     }
@@ -222,11 +225,13 @@ const bulletHeight = 128;
 bullets.forEach((b, i) => {
   b.y -= 6;
 
-  if (bulletImg.complete && bulletImg.naturalWidth !== 0) {
-    ctx.drawImage(bulletImg, b.x, b.y, bulletWidth, bulletHeight);
-  } else {
+  const fallback = !bulletImg.complete || bulletImg.naturalWidth === 0;
+
+  if (fallback) {
     ctx.fillStyle = "#fff";
-    ctx.fillRect(b.x, b.y, bulletWidth, bulletHeight);
+    ctx.fillRect(b.x - bulletWidth / 2, b.y, bulletWidth, bulletHeight);
+  } else {
+    ctx.drawImage(bulletImg, b.x - bulletWidth / 2, b.y, bulletWidth, bulletHeight);
   }
 
   if (b.y < 0) bullets.splice(i, 1);
@@ -356,5 +361,4 @@ function buyShield() {
 // 启动游戏
 startShooting();
 spawnEnemiesLoop();
-
 gameLoop();
